@@ -2,7 +2,8 @@
 
 A web-based fork of the [original loom](https://github.com/socketteer/loom) - a tree-based writing interface powered by AI.
 
-![Loom Interface](https://via.placeholder.com/800x450/fef3c7/1f2937?text=Loom+Tree+Interface)
+<img width="1041" height="683" alt="image" src="https://github.com/user-attachments/assets/d538cf66-ee4f-4539-8907-8d1bd7475b60" />
+
 
 ## Features
 

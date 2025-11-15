@@ -1,6 +1,6 @@
 import React, { useState, useCallback, memo } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
-import { BookmarkIcon, Zap, Maximize2, Plus } from 'lucide-react';
+import { BookmarkIcon, Zap, Maximize2, Plus, Link } from 'lucide-react';
 import clsx from 'clsx';
 
 interface NodeData {
@@ -9,10 +9,12 @@ interface NodeData {
   bookmark?: boolean;
   isSelected?: boolean;
   isStreaming?: boolean;
+  truncateLength?: number;
   onEdit: (nodeId: string, text: string) => void;
   onGenerate: (nodeId: string) => void;
   onDetailClick: (nodeId: string) => void;
   onAddChild: (nodeId: string) => void;
+  onReconnect?: (nodeId: string) => void;
 }
 
 export const EditableNode = memo(({ id, data, selected }: NodeProps<NodeData>) => {
@@ -73,7 +75,18 @@ export const EditableNode = memo(({ id, data, selected }: NodeProps<NodeData>) =
     [id, data]
   );
 
-  const truncateText = (text: string, maxLength: number = 60) => {
+  const handleReconnectClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (data.onReconnect) {
+        data.onReconnect(id);
+      }
+    },
+    [id, data]
+  );
+
+  const truncateText = (text: string) => {
+    const maxLength = data.truncateLength || 150;
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
   };
@@ -162,7 +175,7 @@ export const EditableNode = memo(({ id, data, selected }: NodeProps<NodeData>) =
               <BookmarkIcon size={16} className="text-amber-600 dark:text-amber-400" fill="currentColor" />
             </div>
           )}
-          {!isEditing && !data.isStreaming && data.text && data.text.length > 60 && (
+          {!isEditing && !data.isStreaming && data.text && data.text.length > (data.truncateLength || 150) && (
             <button
               onClick={handleDetailClick}
               className="p-1.5 hover:bg-amber-200/50 dark:hover:bg-amber-800/50 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md active:scale-95"
@@ -180,6 +193,15 @@ export const EditableNode = memo(({ id, data, selected }: NodeProps<NodeData>) =
               >
                 <Plus size={16} className="text-green-600 dark:text-green-400" />
               </button>
+              {data.onReconnect && (
+                <button
+                  onClick={handleReconnectClick}
+                  className="p-1.5 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-95"
+                  title="Reconectar nó (mudar parent)"
+                >
+                  <Link size={16} className="text-blue-600 dark:text-blue-400" />
+                </button>
+              )}
               <button
                 onClick={handleGenerateClick}
                 className="p-1.5 bg-primary/20 hover:bg-primary/30 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 animate-pop"

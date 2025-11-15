@@ -42,6 +42,7 @@ const defaultPreferences: Preferences = {
   autosave: true,
   model_response: 'backup',
   prob: true,
+  node_text_truncate: 150,
   darkMode: true,
 };
 

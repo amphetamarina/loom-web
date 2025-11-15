@@ -82,6 +82,9 @@ export interface Preferences {
   // Generation data
   prob: boolean;
 
+  // Tree visualization
+  node_text_truncate: number;
+
   // Theme
   darkMode: boolean;
 }

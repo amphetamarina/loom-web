@@ -31,12 +31,13 @@ const nodeTypes: NodeTypes = {
 };
 
 export const TreeView: React.FC<TreeViewProps> = ({ treeId }) => {
-  const { trees, setCurrentNode, updateNode, createNode, getAncestry } = useTreeStore();
-  const { generationSettings, modelConfigs } = useSettingsStore();
+  const { trees, setCurrentNode, updateNode, createNode, getAncestry, reparentNode } = useTreeStore();
+  const { generationSettings, modelConfigs, preferences } = useSettingsStore();
   const tree = trees[treeId];
   const [generatingNodes, setGeneratingNodes] = useState<Set<string>>(new Set());
   const [streamingNodes, setStreamingNodes] = useState<Map<string, string>>(new Map());
   const [selectedNodeForDetail, setSelectedNodeForDetail] = useState<string | null>(null);
+  const [reconnectingNodeId, setReconnectingNodeId] = useState<string | null>(null);
 
   const calculateLayout = useCallback(
     (rootId: string, nodes: Record<string, TreeNode>) => {
@@ -189,6 +190,15 @@ export const TreeView: React.FC<TreeViewProps> = ({ treeId }) => {
     [treeId, createNode]
   );
 
+  const handleReconnect = useCallback(
+    (nodeId: string) => {
+      // Start reconnecting mode
+      setReconnectingNodeId(nodeId);
+      toast.success('Clique em outro nó para reconectar');
+    },
+    []
+  );
+
   const { nodes: flowNodes, edges: flowEdges } = useMemo(() => {
     if (!tree) return { nodes: [], edges: [] };
 
@@ -205,10 +215,12 @@ export const TreeView: React.FC<TreeViewProps> = ({ treeId }) => {
           text: node.text,
           bookmark: node.bookmark,
           isSelected: node.id === tree.currentNodeId,
+          truncateLength: preferences.node_text_truncate,
           onEdit: handleEditNode,
           onGenerate: handleGenerateFromNode,
           onDetailClick: handleNodeDetailClick,
           onAddChild: handleAddChild,
+          onReconnect: node.parentId ? handleReconnect : undefined, // Only allow reconnecting nodes with parents
         },
       });
     });
@@ -234,6 +246,7 @@ export const TreeView: React.FC<TreeViewProps> = ({ treeId }) => {
             bookmark: false,
             isSelected: false,
             isStreaming: true,
+            truncateLength: preferences.node_text_truncate,
             onEdit: () => {},
             onGenerate: () => {},
             onDetailClick: () => {},
@@ -288,7 +301,7 @@ export const TreeView: React.FC<TreeViewProps> = ({ treeId }) => {
     });
 
     return { nodes: allNodes, edges };
-  }, [tree, calculateLayout, handleEditNode, handleGenerateFromNode, handleNodeDetailClick, handleAddChild, generatingNodes, streamingNodes]);
+  }, [tree, calculateLayout, handleEditNode, handleGenerateFromNode, handleNodeDetailClick, handleAddChild, handleReconnect, generatingNodes, streamingNodes, preferences.node_text_truncate]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(flowNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(flowEdges);
@@ -304,11 +317,19 @@ export const TreeView: React.FC<TreeViewProps> = ({ treeId }) => {
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
-      if (!node.id.startsWith('temp-')) {
+      if (node.id.startsWith('temp-')) return;
+
+      // If in reconnecting mode, set this node as the new parent
+      if (reconnectingNodeId && reconnectingNodeId !== node.id) {
+        reparentNode(treeId, reconnectingNodeId, node.id);
+        toast.success('Nó reconectado! Gerar novas continuações?');
+        setReconnectingNodeId(null);
+        setCurrentNode(treeId, reconnectingNodeId);
+      } else {
         setCurrentNode(treeId, node.id);
       }
     },
-    [treeId, setCurrentNode]
+    [treeId, setCurrentNode, reconnectingNodeId, reparentNode]
   );
 
   if (!tree) {
@@ -330,6 +351,7 @@ export const TreeView: React.FC<TreeViewProps> = ({ treeId }) => {
           onNodeClick={onNodeClick}
           nodeTypes={nodeTypes}
           fitView
+          defaultViewport={{ x: 0, y: 0, zoom: 1.2 }}
           attributionPosition="bottom-left"
           minZoom={0.1}
           maxZoom={2}

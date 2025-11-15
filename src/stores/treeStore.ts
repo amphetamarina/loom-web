@@ -20,6 +20,7 @@ interface TreeState {
   updateNode: (treeId: string, nodeId: string, updates: Partial<TreeNode>) => void;
   deleteNode: (treeId: string, nodeId: string) => void;
   setCurrentNode: (treeId: string, nodeId: string) => void;
+  reparentNode: (treeId: string, nodeId: string, newParentId: string) => void;
 
   // Navigation
   getCurrentNode: (treeId: string) => TreeNode | null;
@@ -175,6 +176,36 @@ export const useTreeStore = create<TreeState>()(
           if (tree && tree.nodes[nodeId]) {
             tree.currentNodeId = nodeId;
           }
+        });
+      },
+
+      reparentNode: (treeId: string, nodeId: string, newParentId: string) => {
+        set((state) => {
+          const tree = state.trees[treeId];
+          if (!tree || !tree.nodes[nodeId] || !tree.nodes[newParentId]) return;
+
+          const node = tree.nodes[nodeId];
+
+          // Can't reparent to itself or its own descendants
+          if (nodeId === newParentId) return;
+
+          // Remove from old parent's children
+          if (node.parentId && tree.nodes[node.parentId]) {
+            tree.nodes[node.parentId].children = tree.nodes[node.parentId].children.filter(
+              (id) => id !== nodeId
+            );
+          }
+
+          // Update node's parent
+          node.parentId = newParentId;
+          node.modified = Date.now();
+
+          // Add to new parent's children
+          if (!tree.nodes[newParentId].children.includes(nodeId)) {
+            tree.nodes[newParentId].children.push(nodeId);
+          }
+
+          tree.modified = Date.now();
         });
       },
 

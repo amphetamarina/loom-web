@@ -53,7 +53,7 @@ export interface GenerationSettings {
 
 export interface ModelConfig {
   name: string;
-  type: 'openai' | 'openai-chat' | 'together' | 'llama-cpp' | 'custom';
+  provider: 'openai' | 'anthropic' | 'ollama' | 'custom';
   api_base?: string;
   api_key?: string;
   system_prompt?: string;

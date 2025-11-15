@@ -13,7 +13,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import { useTreeStore } from '@/stores/treeStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { OpenAIService } from '@/services/openai';
+import { AIService } from '@/services/aiService';
 import { EditableNode } from './EditableNode';
 import { NodeDetailModal } from './NodeDetailModal';
 import type { TreeNode } from '@/types';
@@ -121,15 +121,15 @@ export const TreeView: React.FC<TreeViewProps> = ({ treeId }) => {
           throw new Error('Configuração do modelo não encontrada');
         }
 
-        // Initialize OpenAI service
-        const openaiService = new OpenAIService(modelConfig);
+        // Initialize AI service
+        const aiService = new AIService(modelConfig);
 
         // Generate with streaming
         toast.loading(`Gerando ${generationSettings.num_continuations} continuações...`, {
           id: 'generating',
         });
 
-        await openaiService.generateStreaming(
+        await aiService.generateStreaming(
           prompt,
           generationSettings,
           (completionIndex: number, text: string, done: boolean) => {

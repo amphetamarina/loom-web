@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTreeStore } from '@/stores/treeStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { OpenAIService } from '@/services/openai';
+import { AIService } from '@/services/aiService';
 import { X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -40,8 +40,8 @@ export const GenerateDialog: React.FC<GenerateDialogProps> = ({ treeId, onClose 
         throw new Error('Configuração do modelo não encontrada');
       }
 
-      // Initialize OpenAI service
-      const openaiService = new OpenAIService(modelConfig);
+      // Initialize AI service
+      const aiService = new AIService(modelConfig);
 
       // Generate with streaming
       toast.loading(`Gerando ${generationSettings.num_continuations} continuações...`, {
@@ -50,7 +50,7 @@ export const GenerateDialog: React.FC<GenerateDialogProps> = ({ treeId, onClose 
 
       const completedTexts: string[] = [];
 
-      await openaiService.generateStreaming(
+      await aiService.generateStreaming(
         prompt,
         generationSettings,
         (_completionIndex: number, text: string, done: boolean) => {

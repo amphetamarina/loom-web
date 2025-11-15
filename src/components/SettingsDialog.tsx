@@ -13,7 +13,7 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({ onClose }) => {
   const [editingModel, setEditingModel] = useState<string | null>(null);
   const [newModelName, setNewModelName] = useState('');
   const [newModelConfig, setNewModelConfig] = useState<Partial<ModelConfig>>({
-    type: 'openai-chat',
+    provider: 'openai',
     api_base: '',
     api_key: '',
   });
@@ -26,14 +26,14 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({ onClose }) => {
 
     addModelConfig(newModelName, {
       name: newModelName,
-      type: newModelConfig.type || 'openai-chat',
+      provider: newModelConfig.provider || 'openai',
       api_base: newModelConfig.api_base,
       api_key: newModelConfig.api_key,
       system_prompt: newModelConfig.system_prompt,
     });
 
     setNewModelName('');
-    setNewModelConfig({ type: 'openai-chat', api_base: '', api_key: '' });
+    setNewModelConfig({ provider: 'openai', api_base: '', api_key: '' });
     setEditingModel(null);
   };
 
@@ -139,17 +139,16 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({ onClose }) => {
                   {editingModel === modelName ? (
                     <div className="space-y-3">
                       <div>
-                        <label className="block text-sm mb-1">Tipo</label>
+                        <label className="block text-sm mb-1">Provider</label>
                         <select
-                          value={config.type}
-                          onChange={(e) => handleUpdateModel(modelName, { type: e.target.value as any })}
+                          value={config.provider}
+                          onChange={(e) => handleUpdateModel(modelName, { provider: e.target.value as any })}
                           className="w-full p-2 bg-background border border-border rounded text-sm"
                         >
-                          <option value="openai-chat">OpenAI Chat</option>
-                          <option value="openai">OpenAI Legacy</option>
-                          <option value="together">Together AI</option>
-                          <option value="llama-cpp">Llama.cpp Local</option>
-                          <option value="custom">Custom</option>
+                          <option value="openai">OpenAI</option>
+                          <option value="anthropic">Anthropic</option>
+                          <option value="ollama">Ollama</option>
+                          <option value="custom">Custom (OpenAI-compatible)</option>
                         </select>
                       </div>
 
@@ -194,7 +193,7 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({ onClose }) => {
                     </div>
                   ) : (
                     <div className="text-sm space-y-1 text-muted-foreground">
-                      <p>Tipo: {config.type}</p>
+                      <p>Provider: {config.provider}</p>
                       {config.api_base && <p>Base URL: {config.api_base}</p>}
                       <p>API Key: {config.api_key ? '••••••••' : 'Usando .env'}</p>
                       {config.system_prompt && <p>System Prompt: {config.system_prompt.substring(0, 50)}...</p>}
@@ -223,17 +222,16 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({ onClose }) => {
               </div>
 
               <div>
-                <label className="block text-sm mb-1">Tipo</label>
+                <label className="block text-sm mb-1">Provider</label>
                 <select
-                  value={newModelConfig.type}
-                  onChange={(e) => setNewModelConfig({ ...newModelConfig, type: e.target.value as any })}
+                  value={newModelConfig.provider}
+                  onChange={(e) => setNewModelConfig({ ...newModelConfig, provider: e.target.value as any })}
                   className="w-full p-2 bg-background border border-border rounded text-sm"
                 >
-                  <option value="openai-chat">OpenAI Chat</option>
-                  <option value="openai">OpenAI Legacy</option>
-                  <option value="together">Together AI</option>
-                  <option value="llama-cpp">Llama.cpp Local</option>
-                  <option value="custom">Custom</option>
+                  <option value="openai">OpenAI</option>
+                  <option value="anthropic">Anthropic</option>
+                  <option value="ollama">Ollama</option>
+                  <option value="custom">Custom (OpenAI-compatible)</option>
                 </select>
               </div>
 

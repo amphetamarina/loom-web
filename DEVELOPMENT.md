@@ -85,9 +85,44 @@ bun run dev          # http://localhost:3000
 PORT=3737 bun run dev
 ```
 
-If you change the SW, force-reload (Ctrl+Shift+R) — browsers cache it
+If you change the SW, force-reload (Ctrl+Shift+R) since browsers cache it
 aggressively. In Chrome DevTools, the *Application → Service Workers* tab has
 an "Update on reload" checkbox that helps during development.
+
+## Release process
+
+webloom is published to npm as a Bun-only CLI. `bunx webloom` (or
+`bun x webloom`) downloads the tarball and runs `./server.js` directly via
+the shebang `#!/usr/bin/env bun`.
+
+Preview the tarball before releasing:
+
+```bash
+bun pm pack --dry-run
+```
+
+Contents are governed by the `"files"` field in `package.json`:
+`server.js`, `sw.js`, `index.html`, `public/` (plus `README.md` and
+`package.json`, included automatically).
+
+To cut a release:
+
+```bash
+# bump version in package.json, then:
+git commit -am "release: vX.Y.Z"
+git tag vX.Y.Z
+git push --follow-tags
+npm publish              # requires `npm login` once
+```
+
+`mise.toml`, `DEVELOPMENT.md`, and `.git*` are intentionally excluded from
+the tarball (not in `"files"`).
+
+### IDB schema changes
+
+If `sw.js` changes the IndexedDB shape, bump the `open()` version, write an
+`onupgradeneeded` migration, and ship the SW change as a minor or major
+version bump so users force-refresh.
 
 ## Adding a new endpoint
 

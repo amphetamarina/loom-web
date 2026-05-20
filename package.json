@@ -1,11 +1,41 @@
 {
   "name": "webloom",
-  "private": true,
   "version": "2.0.0",
   "type": "module",
-  "description": "Tree-based AI writing interface — HTMX + Bun, no build step",
+  "description": "tree-based AI writing interface. HTMX + Bun, no build step. brutalist NT skin.",
+  "bin": {
+    "webloom": "./server.js"
+  },
   "scripts": {
     "dev": "bun run server.js",
     "start": "bun run server.js"
-  }
+  },
+  "files": [
+    "server.js",
+    "sw.js",
+    "index.html",
+    "public/"
+  ],
+  "keywords": [
+    "ai",
+    "writing",
+    "loom",
+    "tree",
+    "openai",
+    "htmx",
+    "bun"
+  ],
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amphetamarina/webloom.git"
+  },
+  "bugs": {
+    "url": "https://github.com/amphetamarina/webloom/issues"
+  },
+  "homepage": "https://github.com/amphetamarina/webloom#readme",
+  "license": "MIT",
+  "author": "Marina Cabrera"
 }

@@ -1,4 +1,5 @@
-// Bun static file server. No backend logic — all dynamic behaviour lives in
+#!/usr/bin/env bun
+// Bun static file server. No backend logic. All dynamic behaviour lives in
 // the browser's Service Worker (sw.js). This server only ships files.
 
 import { file } from "bun";

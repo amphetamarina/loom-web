@@ -1,13 +1,113 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/zoneplate.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Loom - Tree Writing Interface for GPT</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <title>Webloom</title>
+  <link rel="icon" href="/public/zoneplate.png" />
+  <link rel="stylesheet" href="/public/brutalist.css" />
+  <script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js"></script>
+  <script src="https://unpkg.com/htmx-ext-sse@2.2.2/sse.js"></script>
+</head>
+<body>
+  <div class="titlebar">
+    <span>Webloom &mdash; tree-based AI writing</span>
+    <span class="controls">
+      <button title="Settings"
+              hx-get="/api/settings"
+              hx-target="#dialog-host"
+              hx-swap="innerHTML">Settings</button>
+    </span>
+  </div>
+
+  <nav class="tabbar" id="tabs"
+       hx-get="/api/trees"
+       hx-trigger="load, trees-changed from:body"
+       hx-swap="innerHTML"></nav>
+
+  <main>
+    <section class="pane" id="workspace"
+             hx-get="/api/active"
+             hx-trigger="load delay:50ms, active-changed from:body, tree-changed from:body"
+             hx-swap="innerHTML">
+      <em>Loading&hellip;</em>
+    </section>
+  </main>
+
+  <footer class="statusbar">
+    <span class="slot" id="status-main">Ready</span>
+    <span class="slot" id="status-model"
+          hx-get="/api/model-summary"
+          hx-trigger="load, settings-changed from:body"
+          hx-swap="innerHTML">&mdash;</span>
+    <span class="slot" style="flex:1; text-align:right;">Webloom 2.0 :: HTMX + Bun</span>
+  </footer>
+
+  <div id="dialog-host"></div>
+  <div id="toast"></div>
+
+  <script>
+    (async () => {
+      if (!("serviceWorker" in navigator)) {
+        showToast("Service Workers unsupported in this browser.", true);
+        return;
+      }
+
+      const legacy = {
+        trees: safeParse(localStorage.getItem("loom-trees")),
+        settings: safeParse(localStorage.getItem("loom-settings")),
+      };
+
+      await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+      await navigator.serviceWorker.ready;
+
+      if (!navigator.serviceWorker.controller) {
+        await new Promise((resolve) => {
+          const t = setInterval(() => {
+            if (navigator.serviceWorker.controller) { clearInterval(t); resolve(); }
+          }, 50);
+        });
+      }
+
+      navigator.serviceWorker.controller.postMessage({ type: "migrate", legacy });
+
+      // Re-trigger initial HTMX loads now that SW is ready (in case load fired
+      // before controller was active).
+      htmx.trigger("#tabs", "trees-changed");
+      htmx.trigger("#workspace", "active-changed");
+      htmx.trigger("#status-model", "settings-changed");
+    })();
+
+    function safeParse(s) { try { return s ? JSON.parse(s) : null; } catch { return null; } }
+
+    function showToast(msg, isError) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.className = "show" + (isError ? " error" : "");
+      setTimeout(() => { el.className = ""; }, 3500);
+    }
+
+    document.body.addEventListener("htmx:responseError", (e) => {
+      const d = e.detail;
+      showToast("Error " + d.xhr.status + ": " + (d.xhr.responseText || "request failed"), true);
+    });
+    document.body.addEventListener("htmx:sendError", () => showToast("Network error", true));
+    document.body.addEventListener("show-toast", (e) => {
+      showToast(e.detail.value || e.detail.message || String(e.detail), !!e.detail.error);
+    });
+
+    document.body.addEventListener("htmx:afterSwap", (e) => {
+      const dlg = e.target.querySelector && e.target.querySelector("dialog:not([open])");
+      if (dlg) dlg.showModal();
+    });
+
+    // close a parent dialog when a button declares data-close-dialog
+    document.body.addEventListener("click", (e) => {
+      const t = e.target;
+      if (t.matches && t.matches("[data-close-dialog]")) {
+        const d = t.closest("dialog");
+        if (d) d.close();
+      }
+    });
+  </script>
+</body>
 </html>

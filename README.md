@@ -1,201 +1,65 @@
 # webloom
 
-A web-based fork of the [original loom](https://github.com/socketteer/loom) - a tree-based writing interface powered by AI.
+Tree-based writing interface for AI models — branch your prose, splice
+continuations, edit subtrees freely. Originally a fork of
+[socketteer/loom](https://github.com/socketteer/loom).
 
-<img width="1266" height="696" alt="image" src="https://github.com/user-attachments/assets/05d9ffc9-43ca-475e-92de-34040a73a2f3" />
-
-
+![screenshot](https://github.com/user-attachments/assets/05d9ffc9-43ca-475e-92de-34040a73a2f3)
 
 ## Features
 
-- **Tree-Based Writing**: Explore multiple narrative branches visually
-- **AI-Powered Generation**: Generate continuations using multiple AI providers
-- **Multi-Provider Support**: OpenAI, Anthropic, Ollama, and custom endpoints
-- **Real-Time Streaming**: See AI responses as they're generated
-- **Interactive Tree Visualization**: Powered by React Flow with horizontal layout
-- **Flexible Configuration**:
-  - Chat API (default) for modern models
-  - Completions API for Ollama and legacy models
-  - Configurable system prompts per model
-  - Temperature-only generation for maximum compatibility
-- **Node Management**:
-  - Manual node creation
-  - Reconnect nodes to change narrative flow
-  - Bookmark important nodes
-  - Editable node titles
-- **Persistence**: Auto-save with local storage
-- **Modern UI**: Skeumorphic design with pastel yellow theme
+- Tree-based writing with manual and AI-generated continuations
+- Real-time token streaming
+- Reparent, bookmark, delete subtrees, multiple tabs
+- Local-only persistence — your trees never leave your browser
+- Brutalist Windows NT look
 
-## Quick Start
+## Any OpenAI-compatible endpoint works
 
-### Prerequisites
+Webloom speaks the OpenAI chat-completions and completions wire formats, so
+any provider exposing those endpoints works. Just set the model's **Base URL**
+and **API key** in Settings.
 
-- Node.js 18+ and npm
-- API keys for your chosen provider (OpenAI, Anthropic, or Ollama)
+| Provider     | Base URL                          | API type     |
+|--------------|-----------------------------------|--------------|
+| OpenAI       | `https://api.openai.com/v1`       | chat         |
+| Anthropic    | `https://api.anthropic.com/v1`    | chat         |
+| Ollama       | `http://localhost:11434/v1`       | completions  |
+| LM Studio    | `http://localhost:1234/v1`        | chat         |
+| llama.cpp    | `http://localhost:8080/v1`        | completions  |
+| vLLM / TGI   | `http://your-host:8000/v1`        | chat         |
+| Groq         | `https://api.groq.com/openai/v1`  | chat         |
+| Together     | `https://api.together.xyz/v1`     | chat         |
+| OpenRouter   | `https://openrouter.ai/api/v1`    | chat         |
 
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/amphetamarina/loom.git
-cd loom
-
-# Install dependencies
-npm install
-
-# Set up environment variables (optional)
-cp .env.example .env
-# Edit .env with your API keys
-
-# Start development server
-npm run dev
-```
-
-Visit `http://localhost:5173` to start using Loom.
-
-### Building for Production
+## Run it
 
 ```bash
-npm run build
-npm run preview
+mise install     # installs Bun via mise.toml
+bun run dev      # http://localhost:3000
 ```
 
-## Configuration
+Don't have [mise](https://mise.jdx.dev)? Install [Bun](https://bun.sh)
+directly and run `bun run dev`.
 
-### Adding AI Models
+Set `PORT=...` to change the port.
 
-1. Open Settings (gear icon)
-2. Click "Adicionar Novo Modelo"
-3. Configure:
-   - **Model Name**: e.g., `gpt-4o`, `claude-3-5-sonnet`, `llama3`
-   - **Provider**: OpenAI, Anthropic, Ollama, or Custom
-   - **API Type**:
-     - `Chat / Messages API` for modern chat models (default)
-     - `Completions API` for Ollama and legacy models
-   - **Base URL**: (optional) Custom endpoint
-   - **API Key**: (optional) Uses environment variable if not set
-   - **System Prompt**: (optional) Custom system instructions
+## Use it
 
-### Using with Ollama
+1. Open the app — a blank tree is created with one empty root node.
+2. Click **Settings** in the title bar. Paste your API key(s) and pick a model.
+3. **Edit** the root node, type a prompt, **Save**.
+4. **Gen** streams a continuation as a child node.
+5. Branch freely: edit any node, generate again, reparent, bookmark ★,
+   delete subtrees ×.
 
-For local inference with Ollama:
-
-1. Install and start [Ollama](https://ollama.ai)
-2. Pull a model: `ollama pull llama3`
-3. In Loom Settings:
-   - Provider: `Ollama`
-   - API Type: `Completions API`
-   - Model Name: `llama3`
-   - Base URL: `http://localhost:11434/v1` (default)
-
-## Usage
-
-### Basic Workflow
-
-1. **Start Writing**: Type your initial prompt in the root node
-2. **Generate**: Click the lightning bolt icon to generate AI continuations
-3. **Navigate**: Click on nodes to explore different branches
-4. **Edit**: Double-click nodes to edit text
-5. **Add Nodes**: Use the Plus icon to manually add child nodes
-6. **Reconnect**: Use the Link icon to change a node's parent
-7. **Save**: Trees are auto-saved to browser storage
-
-### Keyboard Shortcuts
-
-- **Double-click tab title**: Rename tree
-- **Double-click node**: Edit text
-- **Enter**: Save edits
-- **Escape**: Cancel edits
-
-## Technology Stack
-
-- **Framework**: React 18 + TypeScript
-- **Build Tool**: Vite 5
-- **State Management**: Zustand with persistence
-- **AI SDK**: Vercel AI SDK
-- **Visualization**: React Flow 11
-- **Styling**: Tailwind CSS 3
-- **Icons**: Lucide React
-
-## Architecture
-
-```
-src/
-├── components/       # React components
-│   ├── TreeView.tsx     # Main tree visualization
-│   ├── EditableNode.tsx # Interactive node component
-│   ├── SettingsDialog.tsx
-│   └── ...
-├── services/         # Business logic
-│   └── aiService.ts     # Multi-provider AI integration
-├── stores/          # Zustand state management
-│   ├── treeStore.ts     # Tree data and operations
-│   └── settingsStore.ts # App settings and models
-├── types/           # TypeScript definitions
-└── hooks/           # Custom React hooks
-```
-
-## API Compatibility
-
-### Chat API (Default)
-Uses the Vercel AI SDK's unified `streamText()` interface:
-- OpenAI: `gpt-4o`, `gpt-4o-mini`, etc.
-- Anthropic: `claude-3-5-sonnet`, `claude-3-opus`, etc.
-- Custom: Any OpenAI-compatible endpoint
-
-### Completions API
-Direct HTTP streaming for legacy compatibility:
-- Ollama: All models
-- Custom: Any `/v1/completions` compatible endpoint
-
-## Development
-
-### Project Structure
-
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
-npm run lint         # Lint code
-```
-
-### Environment Variables
-
-Create a `.env` file:
-
-```env
-VITE_OPENAI_API_KEY=sk-...
-VITE_ANTHROPIC_API_KEY=sk-ant-...
-```
-
-## Contributing
-
-This is a personal fork focused on web-based accessibility. For the original Python/Tkinter version, see [socketteer/loom](https://github.com/socketteer/loom).
-
-## License
-
-This project inherits the license from the original Loom project.
+Tabs across the top let you keep multiple trees. The status bar shows the
+active model and temperature.
 
 ## Credits
 
 - Original Loom: [socketteer/loom](https://github.com/socketteer/loom)
 - Web fork: [@amphetamarina](https://github.com/amphetamarina)
 
-## Troubleshooting
-
-### Ollama Connection Issues
-- Ensure Ollama is running: `ollama serve`
-- Check base URL matches Ollama endpoint
-- Select **Completions API** type (not Chat API)
-
-### Model Compatibility
-- Use Chat API for: OpenAI, Anthropic, most cloud providers
-- Use Completions API for: Ollama, legacy models, custom endpoints
-
-### Browser Storage
-- Trees are saved to localStorage
-- Export important work as JSON (coming soon)
-
----
-
-**Happy writing! 🌳✨**
+See [DEVELOPMENT.md](./DEVELOPMENT.md) for architecture, internals, and
+contributing notes.

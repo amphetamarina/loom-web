@@ -1,0 +1,425 @@
+/* Webloom — brutalist Windows NT theme. No rounded corners, no animations
+   except a blinking cursor, no gradients. Hard borders only. */
+
+:root {
+  --face: #c0c0c0;
+  --face-dark: #808080;
+  --face-darker: #404040;
+  --hi: #ffffff;
+  --shadow: #808080;
+  --shadow-dark: #000000;
+  --text: #000000;
+  --text-disabled: #808080;
+  --titlebar: #000080;
+  --titlebar-text: #ffffff;
+  --titlebar-inactive: #808080;
+  --select: #000080;
+  --select-text: #ffffff;
+  --link: #0000ee;
+  --error: #800000;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Tahoma", "MS Sans Serif", "Microsoft Sans Serif", "Liberation Sans", sans-serif;
+  font-size: 11px;
+  background: var(--face);
+  color: var(--text);
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- title bar ---- */
+.titlebar {
+  background: var(--titlebar);
+  color: var(--titlebar-text);
+  font-weight: bold;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  user-select: none;
+}
+.titlebar .controls { display: flex; gap: 2px; }
+.titlebar button {
+  width: 16px;
+  height: 14px;
+  padding: 0;
+  font-size: 9px;
+  line-height: 1;
+}
+
+/* ---- menubar ---- */
+.menubar {
+  display: flex;
+  background: var(--face);
+  border-bottom: 1px solid var(--shadow-dark);
+  padding: 1px 2px;
+  gap: 2px;
+}
+.menubar button {
+  padding: 2px 8px;
+  border: 1px solid transparent;
+  background: transparent;
+}
+.menubar button:hover {
+  border-top: 1px solid var(--hi);
+  border-left: 1px solid var(--hi);
+  border-right: 1px solid var(--shadow);
+  border-bottom: 1px solid var(--shadow);
+}
+
+/* ---- tab bar ---- */
+.tabbar {
+  display: flex;
+  background: var(--face);
+  padding: 4px 4px 0 4px;
+  border-bottom: 1px solid var(--shadow-dark);
+  gap: 0;
+  overflow-x: auto;
+}
+.tab {
+  padding: 3px 12px 4px 12px;
+  border-top: 1px solid var(--hi);
+  border-left: 1px solid var(--hi);
+  border-right: 1px solid var(--shadow-dark);
+  border-bottom: none;
+  background: var(--face);
+  margin-right: -1px;
+  cursor: pointer;
+  position: relative;
+  bottom: -1px;
+  min-width: 80px;
+  text-align: center;
+  font-size: 11px;
+}
+.tab.active {
+  background: var(--face);
+  font-weight: bold;
+  z-index: 1;
+  padding-bottom: 5px;
+  bottom: -2px;
+}
+.tab .close {
+  margin-left: 8px;
+  font-weight: bold;
+  color: var(--text);
+}
+.tab .close:hover { color: var(--error); }
+.tab-new {
+  padding: 3px 8px;
+  border-top: 1px solid var(--hi);
+  border-left: 1px solid var(--hi);
+  border-right: 1px solid var(--shadow-dark);
+  background: var(--face);
+  cursor: pointer;
+  position: relative;
+  bottom: -1px;
+  font-weight: bold;
+}
+
+/* ---- main pane ---- */
+main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  background: var(--face);
+}
+.pane {
+  flex: 1;
+  overflow: auto;
+  padding: 6px 8px;
+  background: var(--hi);
+  border-top: 1px solid var(--shadow);
+  border-left: 1px solid var(--shadow);
+  border-right: 1px solid var(--hi);
+  border-bottom: 1px solid var(--hi);
+  margin: 4px;
+  font-family: "Lucida Console", "Consolas", monospace;
+  font-size: 12px;
+}
+
+/* ---- status bar ---- */
+.statusbar {
+  display: flex;
+  border-top: 1px solid var(--hi);
+  padding: 2px 4px;
+  background: var(--face);
+  font-size: 11px;
+  gap: 8px;
+}
+.statusbar .slot {
+  border-top: 1px solid var(--shadow);
+  border-left: 1px solid var(--shadow);
+  border-right: 1px solid var(--hi);
+  border-bottom: 1px solid var(--hi);
+  padding: 1px 6px;
+  min-width: 80px;
+}
+
+/* ---- buttons ---- */
+button, .btn, input[type="button"], input[type="submit"] {
+  font-family: inherit;
+  font-size: 11px;
+  background: var(--face);
+  color: var(--text);
+  border-top: 1px solid var(--hi);
+  border-left: 1px solid var(--hi);
+  border-right: 1px solid var(--shadow-dark);
+  border-bottom: 1px solid var(--shadow-dark);
+  padding: 2px 10px;
+  cursor: pointer;
+  min-width: 24px;
+}
+button:active, .btn:active, input[type="button"]:active, input[type="submit"]:active {
+  border-top: 1px solid var(--shadow-dark);
+  border-left: 1px solid var(--shadow-dark);
+  border-right: 1px solid var(--hi);
+  border-bottom: 1px solid var(--hi);
+  padding: 3px 9px 1px 11px;
+}
+button:focus { outline: 1px dotted var(--text); outline-offset: -3px; }
+button:disabled { color: var(--text-disabled); cursor: not-allowed; }
+
+/* ---- inputs ---- */
+input[type="text"], input[type="password"], input[type="number"], textarea, select {
+  font-family: inherit;
+  font-size: 11px;
+  background: var(--hi);
+  color: var(--text);
+  border-top: 1px solid var(--shadow-dark);
+  border-left: 1px solid var(--shadow-dark);
+  border-right: 1px solid var(--hi);
+  border-bottom: 1px solid var(--hi);
+  padding: 2px 4px;
+}
+textarea {
+  font-family: "Lucida Console", "Consolas", monospace;
+  font-size: 12px;
+  resize: vertical;
+}
+input:focus, textarea:focus, select:focus { outline: 1px dotted var(--text); outline-offset: 1px; }
+
+label {
+  display: inline-block;
+  font-size: 11px;
+}
+fieldset {
+  border-top: 1px solid var(--shadow-dark);
+  border-left: 1px solid var(--shadow-dark);
+  border-right: 1px solid var(--hi);
+  border-bottom: 1px solid var(--hi);
+  padding: 8px;
+  margin: 6px 0;
+}
+fieldset > legend {
+  font-weight: bold;
+  padding: 0 4px;
+}
+
+/* ---- tree view ---- */
+ul.tree, ul.tree ul {
+  list-style: none;
+  padding-left: 16px;
+  margin: 0;
+  border-left: 1px dotted var(--shadow);
+}
+ul.tree { padding-left: 0; border-left: none; }
+ul.tree li {
+  position: relative;
+  padding: 1px 0 1px 8px;
+}
+ul.tree ul > li::before {
+  content: "";
+  position: absolute;
+  left: -16px;
+  top: 8px;
+  width: 16px;
+  border-top: 1px dotted var(--shadow);
+}
+
+.node {
+  display: block;
+  padding: 2px 4px;
+  border: 1px solid transparent;
+  cursor: default;
+}
+.node:hover {
+  border: 1px dotted var(--shadow-dark);
+}
+.node.active {
+  background: var(--select);
+  color: var(--select-text);
+}
+.node.active .actions button { color: var(--text); }
+.node.bookmark::before { content: "★ "; color: var(--titlebar); }
+.node.active.bookmark::before { color: var(--titlebar-text); }
+.node .text {
+  display: inline;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.node .text.empty::before {
+  content: "(empty)";
+  color: var(--text-disabled);
+  font-style: italic;
+}
+.node .actions {
+  display: inline-block;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+.node .actions button {
+  font-size: 10px;
+  padding: 0px 4px;
+  margin-left: 2px;
+  min-width: 0;
+}
+
+.streaming .cursor {
+  display: inline-block;
+  width: 7px;
+  background: var(--text);
+  color: var(--text);
+  animation: blink 1s steps(2) infinite;
+}
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+/* ---- modals (native <dialog>) ---- */
+dialog {
+  border: none;
+  padding: 0;
+  background: var(--face);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 11px;
+  min-width: 380px;
+  max-width: 720px;
+  border-top: 1px solid var(--hi);
+  border-left: 1px solid var(--hi);
+  border-right: 1px solid var(--shadow-dark);
+  border-bottom: 1px solid var(--shadow-dark);
+  box-shadow: 2px 2px 0 var(--shadow-dark);
+}
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.35);
+}
+dialog .titlebar {
+  cursor: move;
+}
+dialog .body {
+  padding: 10px 12px;
+  max-height: 70vh;
+  overflow: auto;
+}
+dialog .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 6px 10px 10px;
+}
+
+/* ---- forms ---- */
+.form-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 6px 8px;
+  align-items: center;
+  margin: 4px 0;
+}
+.form-row label { text-align: right; }
+.form-row .full { grid-column: 1 / 3; }
+
+/* ---- read view ---- */
+.read-view {
+  font-family: "Lucida Console", "Consolas", monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+  padding: 12px 18px;
+  line-height: 1.4;
+}
+.read-view .current {
+  background: #ffff80;
+  outline: 1px solid var(--text);
+}
+.read-view .nav {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--shadow);
+}
+
+/* ---- toast ---- */
+#toast {
+  position: fixed;
+  bottom: 28px;
+  right: 12px;
+  background: var(--face);
+  border-top: 1px solid var(--hi);
+  border-left: 1px solid var(--hi);
+  border-right: 1px solid var(--shadow-dark);
+  border-bottom: 1px solid var(--shadow-dark);
+  box-shadow: 2px 2px 0 var(--shadow-dark);
+  padding: 8px 12px;
+  max-width: 360px;
+  display: none;
+  z-index: 9999;
+}
+#toast.show { display: block; }
+#toast.error { color: var(--error); }
+
+/* ---- model list ---- */
+.model-list {
+  border-top: 1px solid var(--shadow-dark);
+  border-left: 1px solid var(--shadow-dark);
+  border-right: 1px solid var(--hi);
+  border-bottom: 1px solid var(--hi);
+  background: var(--hi);
+  max-height: 140px;
+  overflow: auto;
+  padding: 2px;
+  margin-bottom: 4px;
+}
+.model-list .row {
+  padding: 2px 4px;
+  cursor: pointer;
+}
+.model-list .row.selected {
+  background: var(--select);
+  color: var(--select-text);
+}
+
+/* ---- scrollbar (NT-ish) ---- */
+::-webkit-scrollbar { width: 16px; height: 16px; background: var(--face); }
+::-webkit-scrollbar-thumb {
+  background: var(--face);
+  border-top: 1px solid var(--hi);
+  border-left: 1px solid var(--hi);
+  border-right: 1px solid var(--shadow-dark);
+  border-bottom: 1px solid var(--shadow-dark);
+}
+::-webkit-scrollbar-track {
+  background: #dfdfdf;
+  background-image: linear-gradient(45deg, #c0c0c0 25%, transparent 25%, transparent 75%, #c0c0c0 75%),
+                    linear-gradient(45deg, #c0c0c0 25%, transparent 25%, transparent 75%, #c0c0c0 75%);
+  background-size: 4px 4px;
+  background-position: 0 0, 2px 2px;
+}
+
+a { color: var(--link); }
+hr { border: none; border-top: 1px solid var(--shadow); border-bottom: 1px solid var(--hi); margin: 6px 0; }
+
+code, pre { font-family: "Lucida Console", "Consolas", monospace; }

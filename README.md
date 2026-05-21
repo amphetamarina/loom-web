@@ -1,8 +1,9 @@
 # webloom
 
-tree-based writing interface for AI models. branch your prose, splice continuations, edit subtrees freely. originally a fork of [socketteer/loom](https://github.com/socketteer/loom).
+[![npm](https://img.shields.io/npm/v/@amphetamarina/webloom)](https://www.npmjs.com/package/@amphetamarina/webloom)
+[![license](https://img.shields.io/npm/l/@amphetamarina/webloom)](./LICENSE)
 
-![screenshot](https://github.com/user-attachments/assets/05d9ffc9-43ca-475e-92de-34040a73a2f3)
+tree-based writing interface for AI models. branch your prose, splice continuations, edit subtrees freely. originally a fork of [socketteer/loom](https://github.com/socketteer/loom).
 
 ## features
 

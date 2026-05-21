@@ -91,9 +91,11 @@ an "Update on reload" checkbox that helps during development.
 
 ## Release process
 
-webloom is published to npm as a Bun-only CLI. `bunx webloom` (or
-`bun x webloom`) downloads the tarball and runs `./server.js` directly via
-the shebang `#!/usr/bin/env bun`.
+webloom is published to npm as a scoped Bun-only CLI:
+`@amphetamarina/webloom`. `bunx @amphetamarina/webloom` downloads the tarball
+and runs `./server.js` directly via the shebang `#!/usr/bin/env bun`. The
+binary inside the package is still named `webloom`, so the CLI command is
+unchanged once installed.
 
 Preview the tarball before releasing:
 
@@ -112,7 +114,8 @@ To cut a release:
 git commit -am "release: vX.Y.Z"
 git tag vX.Y.Z
 git push --follow-tags
-npm publish              # requires `npm login` once
+npm publish              # scoped package; `publishConfig.access: public`
+                         # already set so no extra flag needed
 ```
 
 `mise.toml`, `DEVELOPMENT.md`, and `.git*` are intentionally excluded from

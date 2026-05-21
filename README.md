@@ -19,13 +19,12 @@ webloom speaks the OpenAI chat-completions and completions wire formats, so any 
 ## run it
 
 ```bash
-mise install
-bun run dev
+bunx @amphetamarina/webloom
 ```
 
-then open http://localhost:3000.
+then open http://localhost:3000. set `PORT=...` to pick another port.
 
-no [mise](https://mise.jdx.dev)? install [Bun](https://bun.sh) directly and run `bun run dev`. set `PORT=...` to change the port.
+needs [Bun](https://bun.sh).
 
 ## use it
 
